@@ -52,10 +52,11 @@ public class User {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    public User(String password, String email, String username) {
+    public User(String username, String email, String password, String phoneNumber) {
         this.password = password;
         this.email = email;
         this.username = username;
+        this.phoneNumber = phoneNumber;
     }
 
     @Getter
