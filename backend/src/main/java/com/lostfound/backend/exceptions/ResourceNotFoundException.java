@@ -1,5 +1,6 @@
 package com.lostfound.backend.exceptions;
 
+// Recommended to throw when a row is unable to be found in a table (Example: through findBy queries)
 public class ResourceNotFoundException extends RuntimeException {
     String resourceName;
     String field;
