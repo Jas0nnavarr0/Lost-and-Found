@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<Map<String, String>>(response, HttpStatus.BAD_REQUEST);
     }
 
-    // Called when retrieving a row is unable to found in a table (Example: through findBy queries)
+    // Recommended to throw when retrieving a row is unable to found in a table (Example: through findBy queries)
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<APIResponse> myResourceNotFoundException(ResourceNotFoundException e) {
         String message = e.getMessage();
@@ -35,6 +35,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
     }
 
-
+    //  Recommended to throw when encountering a business logic error (Example: post not found through keyword "calculator")
+    @ExceptionHandler(APIException.class)
+    public ResponseEntity<APIResponse> myAPIException(APIException e) {
+        String message = e.getMessage();
+        APIResponse apiResponse = new APIResponse(message, false);
+        return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+    }
 
 }
