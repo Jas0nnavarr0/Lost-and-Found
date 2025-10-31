@@ -70,13 +70,22 @@ public class WebSecurityConfig {
 //                        .requestMatchers("/h2-console/**").permitAll()
 //                        .anyRequest().authenticated());
 //
+
+        http.csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .anyRequest().authenticated()
+                );
+
+        http.authenticationProvider(authenticationProvider());
+        http.addFilterBefore(authenticationJwtTokenFilter(),
+                UsernamePasswordAuthenticationFilter.class);
+
         http.headers(headers -> headers.frameOptions(
                 frameOptions -> frameOptions.sameOrigin()
         ));
-        http.csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
-                );
 
         return http.build();
     }
