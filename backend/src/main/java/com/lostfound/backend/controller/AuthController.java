@@ -5,11 +5,13 @@ import com.lostfound.backend.model.Role;
 import com.lostfound.backend.model.User;
 import com.lostfound.backend.repositories.RoleRepository;
 import com.lostfound.backend.repositories.UserRepository;
+import com.lostfound.backend.security.request.LoginRequest;
 import com.lostfound.backend.security.request.SignupRequest;
 import com.lostfound.backend.security.response.MessageResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,6 +33,14 @@ public class AuthController {
 
     @Autowired
     RoleRepository roleRepository;
+
+    @PostMapping("/signin")
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        Authentication authentication;
+
+
+        return null;
+    }
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
