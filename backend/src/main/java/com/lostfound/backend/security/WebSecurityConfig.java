@@ -5,6 +5,7 @@ import com.lostfound.backend.model.Role;
 import com.lostfound.backend.repositories.RoleRepository;
 import com.lostfound.backend.repositories.UserRepository;
 import com.lostfound.backend.security.jwt.AuthEntryPointJwt;
+import com.lostfound.backend.security.jwt.AuthTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -52,6 +53,11 @@ public class WebSecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthTokenFilter authenticationJwtTokenFilter() {
+        return new AuthTokenFilter();
     }
 
     @Bean
