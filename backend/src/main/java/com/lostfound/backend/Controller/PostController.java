@@ -1,7 +1,9 @@
 package com.lostfound.backend.Controller;
 
+import com.lostfound.backend.dto.PostRequestDTO;
 import com.lostfound.backend.model.Post;
 import com.lostfound.backend.Services.PostService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,7 +30,8 @@ public class PostController {
     }
 
     @PostMapping("/create_post")
-    public Post createPost(@RequestBody Post post) {
-        return postService.createPost(post);
+    public ResponseEntity<Post> createPost(@RequestBody PostRequestDTO postDTO) {
+        Post created = postService.createPost(postDTO);
+        return ResponseEntity.ok(created);
     }
 }

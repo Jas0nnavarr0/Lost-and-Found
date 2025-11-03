@@ -1,5 +1,6 @@
 package com.lostfound.backend.Services;
 
+import com.lostfound.backend.dto.PostRequestDTO;
 import com.lostfound.backend.model.Post;
 import com.lostfound.backend.repositories.PostRepository;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,14 @@ public class PostService {
         this.postRepository = postRepository;
     }
     // Create/ Modify/ Delete posts
-    public Post createPost(Post post){
+    public Post createPost(PostRequestDTO dto){
+        Post post = new Post();
+        post.setTitle(dto.getTitle());
+        post.setDescription(dto.getDescription());
+        post.setLocation(dto.getLocation());
+        post.setCategories(dto.getCategories());
+        post.setFound(dto.isFound());
+
         return postRepository.save(post);
     }
 

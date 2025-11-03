@@ -38,13 +38,13 @@ public class Post {
     private String location;
 
     //?
-    private String imageUrl;
+    //private String imageUrl;
 
     @Column(name = "state")
     private boolean isFound = false;
 
     //?
-    private LocalDate dataReported;
+    //private LocalDate dataReported;
 
     @Column
     private LocalDateTime createdAt;
