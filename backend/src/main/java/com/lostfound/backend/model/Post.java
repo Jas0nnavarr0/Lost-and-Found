@@ -37,8 +37,8 @@ public class Post {
     @Column(length = 100)
     private String location;
 
-    //?
-    //private String imageUrl;
+    @Column
+    private String imageUrl;
 
     @Column(name = "state")
     private boolean isFound = false;
