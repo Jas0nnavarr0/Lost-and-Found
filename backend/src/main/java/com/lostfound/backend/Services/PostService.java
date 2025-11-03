@@ -1,11 +1,13 @@
 package com.lostfound.backend.Services;
 
 import com.lostfound.backend.dto.PostRequestDTO;
+import com.lostfound.backend.dto.PostResponseDTO;
 import com.lostfound.backend.model.Post;
 import com.lostfound.backend.repositories.PostRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -36,8 +38,22 @@ public class PostService {
     }
 
     // Get posts
-    public List<Post> getAllPosts(){
-        return postRepository.findAll();
+    public List<PostResponseDTO> getAllPosts(){
+        // convert each Post -> PostResponseDTO
+        return postRepository.findAll().stream().map(this::mapToResponseDTO).collect(Collectors.toList());
+    }
+    // Convert Post -> DTO
+    private PostResponseDTO mapToResponseDTO(Post post) {
+        return PostResponseDTO.builder()
+                .postId(post.getPostId())
+                .title(post.getTitle())
+                .description(post.getDescription())
+                .categories(post.getCategories())
+                .location(post.getLocation())
+                .found(post.isFound())
+                .username(post.getUser().getUsername())
+                .createdAt(post.getCreatedAt())
+                .build();
     }
 
     public Post getPostById(int id){
