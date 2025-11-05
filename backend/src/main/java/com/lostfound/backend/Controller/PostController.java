@@ -1,7 +1,7 @@
 package com.lostfound.backend.Controller;
 
-import com.lostfound.backend.dto.PostRequestDTO;
-import com.lostfound.backend.dto.PostResponseDTO;
+import com.lostfound.backend.payload.dto.PostRequestDTO;
+import com.lostfound.backend.payload.dto.PostResponseDTO;
 import com.lostfound.backend.model.Post;
 import com.lostfound.backend.Services.PostService;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.lostfound.backend.dto;
+package com.lostfound.backend.payload.dto;
 
 import lombok.Builder;
 import lombok.Data;
