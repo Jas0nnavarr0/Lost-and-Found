@@ -43,4 +43,10 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
     }
 
+    // When users select more than 3 categories, show this msg
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> myIllegalArgumentException(IllegalArgumentException e) {
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+
 }

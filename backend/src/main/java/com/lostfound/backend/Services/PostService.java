@@ -59,7 +59,6 @@ public class PostService {
                 .postId(post.getPostId())
                 .title(post.getTitle())
                 .description(post.getDescription())
-                .categories(post.getCategories())
                 .location(post.getLocation())
                 .found(post.isFound())
                 .username(post.getUser().getUsername())
