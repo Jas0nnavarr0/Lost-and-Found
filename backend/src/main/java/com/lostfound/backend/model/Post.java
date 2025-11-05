@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "posts")
@@ -31,8 +32,8 @@ public class Post {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String description;
 
-    @Column(length = 3)
-    private String categories;
+    @ManyToMany
+    private List<Category> categories;
 
     @Column(length = 100)
     private String location;

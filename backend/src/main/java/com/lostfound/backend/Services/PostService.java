@@ -1,9 +1,12 @@
 package com.lostfound.backend.Services;
 
+import com.lostfound.backend.model.Category;
 import com.lostfound.backend.payload.dto.PostRequestDTO;
 import com.lostfound.backend.payload.dto.PostResponseDTO;
 import com.lostfound.backend.model.Post;
+import com.lostfound.backend.repositories.CategoryRepository;
 import com.lostfound.backend.repositories.PostRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,20 +15,27 @@ import java.util.stream.Collectors;
 @Service
 public class PostService {
     private final PostRepository postRepository;
-
+    @Autowired
+    private CategoryRepository categoryRepository;
     // @Autowired can delete this constructor
     public PostService(PostRepository postRepository){
         this.postRepository = postRepository;
     }
     // Create/ Modify/ Delete posts
-    public Post createPost(PostRequestDTO dto){
+    public Post createPost(PostRequestDTO postDTO){
+        if (postDTO.getCategoryIds().size() > 3) {
+            throw new IllegalArgumentException("You can select up to three categories only")
+        }
         Post post = new Post();
-        post.setTitle(dto.getTitle());
-        post.setDescription(dto.getDescription());
-        post.setLocation(dto.getLocation());
-        post.setCategories(dto.getCategories());
-        post.setFound(dto.isFound());
-        post.setImageUrl(dto.getImageUrl());
+        post.setTitle(postDTO.getTitle());
+        post.setDescription(postDTO.getDescription());
+        post.setLocation(postDTO.getLocation());
+        // get the category entities by their id
+        List<Category> categories = categoryRepository.findAllById(postDTO.getCategoryIds());
+        post.setCategories(categories);
+
+        //post.setFound(postDTO.isFound());
+        post.setImageUrl(postDTO.getImageUrl());
 
         return postRepository.save(post);
     }
