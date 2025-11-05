@@ -2,7 +2,7 @@ package com.lostfound.backend.payload.dto;
 
 import lombok.Builder;
 import lombok.Data;
-
+import java.util.List;
 import java.time.LocalDateTime;
 
 @Data
@@ -11,7 +11,7 @@ public class PostResponseDTO {
         private int postId;
         private String title;
         private String description;
-        private String categories;
+        private List<String> categories;
         private String location;
         private String imageUrl;
         private boolean found;

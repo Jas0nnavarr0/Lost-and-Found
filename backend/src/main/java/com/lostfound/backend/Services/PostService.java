@@ -24,7 +24,7 @@ public class PostService {
     // Create/ Modify/ Delete posts
     public Post createPost(PostRequestDTO postDTO){
         if (postDTO.getCategoryIds().size() > 3) {
-            throw new IllegalArgumentException("You can select up to three categories only")
+            throw new IllegalArgumentException("You can select up to three categories only");
         }
         Post post = new Post();
         post.setTitle(postDTO.getTitle());
@@ -55,10 +55,12 @@ public class PostService {
     }
     // Convert Post -> DTO
     private PostResponseDTO mapToResponseDTO(Post post) {
+        List<String> categoryNames = post.getCategories().stream().map(Category::getCategoryName).collect(Collectors.toList());
         return PostResponseDTO.builder()
                 .postId(post.getPostId())
                 .title(post.getTitle())
                 .description(post.getDescription())
+                .categories(categoryNames)
                 .location(post.getLocation())
                 .found(post.isFound())
                 .username(post.getUser().getUsername())
