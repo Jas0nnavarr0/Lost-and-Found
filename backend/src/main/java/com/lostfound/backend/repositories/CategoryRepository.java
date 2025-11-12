@@ -14,5 +14,5 @@ public interface CategoryRepository extends JpaRepository <Category, Integer> {
     // matches the field name is the category entity
     // containing -> means LIKE %Something% in the SQL
     // case-insensitive
-    List<Category> findByNameContainingIgnoreCase(String name);
+    List<Category> findByCategoryNameContainingIgnoreCase(String categoryName);
 }

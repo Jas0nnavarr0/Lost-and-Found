@@ -14,7 +14,7 @@ public class CategoryService {
 
     public List<Category> searchCategories(String categoryName){
         if(categoryName == null || categoryName.isBlank()) return categoryRepository.findAll();
-        return categoryRepository.findByNameContainingIgnoreCase(categoryName);
+        return categoryRepository.findByCategoryNameContainingIgnoreCase(categoryName);
     }
 
 }
