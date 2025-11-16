@@ -26,27 +26,36 @@ public class Post {
 
     // connect to a user
     @ManyToOne
-    @JoinColumn(name = "user_name") // Defines a foreign key
+    @JoinColumn(name = "user_id") // Defines a foreign key
     private User user;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String description;
 
     @ManyToMany
+    @JoinTable(
+            name = "post_categories",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
     private List<Category> categories;
 
     @Column(length = 100)
     private String location;
 
-    @Column
-    private String imageUrl;
+    @ElementCollection
+    private List<String> imageUrls;
 
-    @Column(name = "state")
+    @Column(name = "is_found")
     private boolean isFound = false;
 
-    //?
-    //private LocalDate dataReported;
-
-    @Column
+    @Column(updatable = false)
     private LocalDateTime createdAt;
+
+    // JPA runs the following method right before the entity is inserted into the database for the first time.
+    // automatically creates a createdAt time when the post is first saved
+    @PrePersist
+    protected void serCreatedAt() {
+        this.createdAt = LocalDateTime.now();
+    }
 }

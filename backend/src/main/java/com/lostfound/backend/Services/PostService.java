@@ -35,7 +35,7 @@ public class PostService {
         post.setCategories(categories);
 
         //post.setFound(postDTO.isFound());
-        post.setImageUrl(postDTO.getImageUrl());
+        post.setImageUrls(postDTO.getImageUrls());
 
         return postRepository.save(post);
     }

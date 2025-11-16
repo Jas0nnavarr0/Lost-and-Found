@@ -14,7 +14,7 @@ public class PostRequestDTO {
         private String description;
         private String categories;
         private String location;
-        private String imageUrl;
+        private List<String> imageUrls;
         private List<Integer> categoryIds; // e.g. [1, 2, 3]
         //private String type;
         private int userId;

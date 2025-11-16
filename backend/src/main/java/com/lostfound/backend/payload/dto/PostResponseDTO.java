@@ -13,9 +13,11 @@ public class PostResponseDTO {
         private String description;
         private List<String> categories;
         private String location;
-        private String imageUrl;
+        private List<String> imageUrls;
         private boolean found;
         private String username; // show username instead of full User object
+        private String userProfileUrl;
+        
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
 }

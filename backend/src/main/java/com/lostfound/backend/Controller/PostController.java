@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 // Only send data to users, rather than entire HTML
@@ -43,29 +44,39 @@ public class PostController {
         Post created = postService.createPost(postDTO);
         return ResponseEntity.ok(created);
     }
-
+    // Used by browsers to display or open the uploaded image after it’s been saved.
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile imageFile) {
+    public ResponseEntity<List<String>> uploadImages(@RequestParam("images") List<MultipartFile> imageFiles) {
         try {
             // Folder where images will be saved
             String uploadDir = "uploads/";
             File dir = new File(uploadDir);
             if (!dir.exists()) dir.mkdirs();
 
-            // Create unique file name
-            String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
-            Path filePath = Paths.get(uploadDir, fileName);
+            // Limit to 5 images
+            if(imageFiles.size() > 5){
+                return ResponseEntity.badRequest().body(List.of("Error: You can only upload up to 5 images only."));
+            }
 
-            // Save file locally
-            Files.write(filePath, imageFile.getBytes());
+            List<String> imageUrls = new ArrayList<>();
 
-            // Return image URL to the client
-            String imageUrl = "/uploads/" + fileName;
-            return ResponseEntity.ok(imageUrl);
+            for(MultipartFile imageFile : imageFiles){
+                // Create unique file name
+                String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
+                Path filePath = Paths.get(uploadDir, fileName);
+                // Save file locally
+                Files.write(filePath, imageFile.getBytes());
+
+                // Return image URL to the client
+                String imageUrl = "/uploads/" + fileName;
+                imageUrls.add(imageUrl);
+            }
+
+            return ResponseEntity.ok(imageUrls);
 
         } catch (IOException e) {
             e.printStackTrace();
-            return ResponseEntity.internalServerError().body("Failed to upload image");
+            return ResponseEntity.internalServerError().body(List.of("Failed to upload image"));
         }
     }
 }
