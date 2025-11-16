@@ -1,9 +1,9 @@
 package com.lostfound.backend.Controller;
 
-import com.lostfound.backend.payload.dto.PostRequestDTO;
-import com.lostfound.backend.payload.dto.PostResponseDTO;
+import com.lostfound.backend.payload.PostRequestDTO;
+import com.lostfound.backend.payload.PostResponseDTO;
 import com.lostfound.backend.model.Post;
-import com.lostfound.backend.Services.PostService;
+import com.lostfound.backend.services.PostService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 // image

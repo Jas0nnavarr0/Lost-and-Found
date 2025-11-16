@@ -1,6 +1,6 @@
-package com.lostfound.backend.Controller;
+package com.lostfound.backend.controller;
 
-import com.lostfound.backend.Services.CategoryService;
+import com.lostfound.backend.services.CategoryService;
 import com.lostfound.backend.model.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

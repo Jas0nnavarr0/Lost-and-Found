@@ -1,10 +1,8 @@
-package com.lostfound.backend.payload.dto;
-import com.lostfound.backend.model.User;
+package com.lostfound.backend.payload;
 
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
