@@ -40,10 +40,12 @@ public class PostController {
     }
 
     @PostMapping("/create_post")
-    public ResponseEntity<Post> createPost(@RequestBody PostRequestDTO postDTO) {
-        Post created = postService.createPost(postDTO);
-        return ResponseEntity.ok(created);
+    public ResponseEntity<PostResponseDTO> createPost(@RequestBody PostRequestDTO postDTO) {
+        PostResponseDTO createdPost = postService.createPost(postDTO);
+        return ResponseEntity.ok(createdPost);
     }
+
+
     // Used by browsers to display or open the uploaded image after it’s been saved.
     @PostMapping("/upload")
     public ResponseEntity<List<String>> uploadImages(@RequestParam("images") List<MultipartFile> imageFiles) {
@@ -78,5 +80,21 @@ public class PostController {
             e.printStackTrace();
             return ResponseEntity.internalServerError().body(List.of("Failed to upload image"));
         }
+    }
+
+    // update post
+    @PutMapping("/posts/{Id}")
+    public ResponseEntity<PostResponseDTO> updatePost(
+            @PathVariable int Id,
+            @RequestBody PostRequestDTO postDTO) {
+        PostResponseDTO updatedPost = postService.updatePost(Id, postDTO);
+        return ResponseEntity.ok(updatedPost);
+    }
+
+    // delete post
+    @DeleteMapping("/posts/{Id}")
+    public ResponseEntity<String> deletePost(@PathVariable int Id) {
+        postService.deletePost(Id);
+        return ResponseEntity.ok("Post deleted successfully");
     }
 }
