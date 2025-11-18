@@ -1,4 +1,4 @@
-package com.lostfound.backend.security.request;
+package com.lostfound.backend.auth.dtos;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -9,13 +9,17 @@ import lombok.Data;
 import java.util.Set;
 
 @Data
-public class SignupRequest {
+public class SignupDTO {
     @NotBlank
     @Size(min = 3, max = 20)
     private String username;
 
     @NotBlank
-    @Size(max = 50)
+    @Size(min = 6, max = 40)
+    private String password;
+
+    @NotBlank
+    @Size(max = 60)
     @Email
     private String email;
 
@@ -24,8 +28,6 @@ public class SignupRequest {
 
     private Set<String> role;
 
-    @NotBlank
-    @Size(min = 6, max = 40)
-    private String password;
+
 
 }

@@ -1,4 +1,4 @@
-package com.lostfound.backend.Controller;
+package com.lostfound.backend.controllers;
 
 import com.lostfound.backend.payload.PostRequestDTO;
 import com.lostfound.backend.payload.PostResponseDTO;

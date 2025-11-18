@@ -5,12 +5,12 @@ import com.lostfound.backend.model.Role;
 import com.lostfound.backend.model.User;
 import com.lostfound.backend.repositories.RoleRepository;
 import com.lostfound.backend.repositories.UserRepository;
-import com.lostfound.backend.security.jwt.JwtUtils;
-import com.lostfound.backend.security.request.LoginRequest;
-import com.lostfound.backend.security.request.SignupRequest;
-import com.lostfound.backend.security.response.MessageResponse;
-import com.lostfound.backend.security.response.UserInfoResponse;
-import com.lostfound.backend.security.service.UserDetailsImpl;
+import com.lostfound.backend.auth.jsontoken.TokenUtilities;
+import com.lostfound.backend.auth.dtos.LoginDTO;
+import com.lostfound.backend.auth.dtos.SignupDTO;
+import com.lostfound.backend.auth.response.MessageResponse;
+import com.lostfound.backend.auth.response.UserInfoResponse;
+import com.lostfound.backend.auth.custom_user_details.UserDetailsImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -46,7 +46,7 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private JwtUtils jwtUtils;
+    private TokenUtilities tokenUtilities;
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/secure/endpoint")
@@ -56,13 +56,13 @@ public class AuthController {
 
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginDTO loginDTO) {
         Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            loginRequest.getUsername(),
-                            loginRequest.getPassword()
+                            loginDTO.getUsername(),
+                            loginDTO.getPassword()
                     )
             );
         } catch (AuthenticationException exception) {
@@ -77,7 +77,7 @@ public class AuthController {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
+        ResponseCookie jwtCookie = tokenUtilities.createJwtCookie(userDetails);
 
         List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
 
@@ -89,25 +89,25 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
-        if (userRepository.existsByUsername(signupRequest.getUsername())) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupDTO signupDTO) {
+        if (userRepository.existsByUsername(signupDTO.getUsername())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
         }
-        if (userRepository.existsByEmail(signupRequest.getEmail())) {
+        if (userRepository.existsByEmail(signupDTO.getEmail())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already taken!"));
         }
-        if (userRepository.existsByPhoneNumber(signupRequest.getPhoneNumber())) {
+        if (userRepository.existsByPhoneNumber(signupDTO.getPhoneNumber())) {
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Phone number is already taken!"));
         }
 
         User user = new User(
-                signupRequest.getUsername(),
-                signupRequest.getEmail(),
-                encoder.encode(signupRequest.getPassword()),
-                signupRequest.getPhoneNumber()
+                signupDTO.getUsername(),
+                signupDTO.getEmail(),
+                encoder.encode(signupDTO.getPassword()),
+                signupDTO.getPhoneNumber()
         );
 
-        Set<String> strRoles = signupRequest.getRole();
+        Set<String> strRoles = signupDTO.getRole();
         Set<Role> roles = new HashSet<>();
 
         if (strRoles == null) {
@@ -155,7 +155,7 @@ public class AuthController {
 
     @PostMapping("/signout")
     public ResponseEntity<?> logoutUser() {
-        ResponseCookie cookie = jwtUtils.getCleanJwtCookie();
+        ResponseCookie cookie = tokenUtilities.retrieveClearedCookie();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE,
                         cookie.toString())
                 .body(new MessageResponse("You've been signed out!"));

@@ -1,4 +1,4 @@
-package com.lostfound.backend.security.service;
+package com.lostfound.backend.auth.custom_user_details;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lostfound.backend.model.User;
@@ -16,8 +16,6 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Data
 public class UserDetailsImpl implements UserDetails {
-
-    private static final long serialVersionUID = 1L;
 
     private Long id;
     private String username;
@@ -49,6 +47,15 @@ public class UserDetailsImpl implements UserDetails {
         );
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        UserDetailsImpl userDetails = (UserDetailsImpl) obj;
+        return Objects.equals(id, userDetails.id);
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -85,13 +92,4 @@ public class UserDetailsImpl implements UserDetails {
         return true;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-        UserDetailsImpl user = (UserDetailsImpl) o;
-        return Objects.equals(id, user.id);
-    }
 }

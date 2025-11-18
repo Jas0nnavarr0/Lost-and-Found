@@ -1,11 +1,11 @@
-package com.lostfound.backend.security;
+package com.lostfound.backend.auth;
 
 import com.lostfound.backend.model.AppRole;
 import com.lostfound.backend.model.Role;
 import com.lostfound.backend.repositories.RoleRepository;
 import com.lostfound.backend.repositories.UserRepository;
-import com.lostfound.backend.security.jwt.AuthEntryPointJwt;
-import com.lostfound.backend.security.jwt.AuthTokenFilter;
+import com.lostfound.backend.auth.jsontoken.UnauthorizedCheck;
+import com.lostfound.backend.auth.jsontoken.AuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -23,18 +23,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.util.Set;
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig {
+public class SecurityConfig {
 
     @Autowired
     UserDetailsService userDetailsService;
 
     @Autowired
-    AuthEntryPointJwt unauthorizedHandler;
+    UnauthorizedCheck unauthorizedHandler;
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -58,8 +56,8 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter();
+    public AuthorizationFilter authenticationJwtTokenFilter() {
+        return new AuthorizationFilter();
     }
 
     @Bean

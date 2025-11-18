@@ -1,4 +1,4 @@
-package com.lostfound.backend.security.service;
+package com.lostfound.backend.auth.custom_user_details;
 
 import com.lostfound.backend.model.User;
 import com.lostfound.backend.repositories.UserRepository;
@@ -17,10 +17,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     //get the authotiries and provide authentication
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
+    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
+        User foundUser = userRepository.findByUsername(name).orElseThrow(() -> new UsernameNotFoundException("No user found with name: " + name));
 
-        return UserDetailsImpl.build(user);
+        return UserDetailsImpl.build(foundUser);
     }
 }

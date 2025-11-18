@@ -1,4 +1,4 @@
-package com.lostfound.backend.config;
+package com.lostfound.backend.configurations;
 
 import com.lostfound.backend.model.Category;
 import com.lostfound.backend.repositories.CategoryRepository;
