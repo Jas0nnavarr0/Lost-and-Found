@@ -17,12 +17,12 @@ import java.util.stream.Collectors;
 @Data
 public class UserDetailsImpl implements UserDetails {
 
+    @JsonIgnore
+    private String password;
+
     private Long id;
     private String username;
     private String email;
-
-    @JsonIgnore
-    private String password;
 
     private Collection<? extends GrantedAuthority> authorities;
 

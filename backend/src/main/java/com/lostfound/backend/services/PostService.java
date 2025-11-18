@@ -1,8 +1,8 @@
 package com.lostfound.backend.services;
 
 import com.lostfound.backend.model.Category;
-import com.lostfound.backend.payload.PostRequestDTO;
-import com.lostfound.backend.payload.PostResponseDTO;
+import com.lostfound.backend.dtos.PostRequestDTO;
+import com.lostfound.backend.dtos.PostResponseDTO;
 import com.lostfound.backend.model.Post;
 import com.lostfound.backend.repositories.CategoryRepository;
 import com.lostfound.backend.repositories.PostRepository;

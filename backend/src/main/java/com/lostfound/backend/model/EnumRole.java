@@ -1,6 +1,6 @@
 package com.lostfound.backend.model;
 
-public enum AppRole {
+public enum EnumRole {
     ROLE_USER,
     ROLE_MODERATOR,
     ROLE_ADMIN,

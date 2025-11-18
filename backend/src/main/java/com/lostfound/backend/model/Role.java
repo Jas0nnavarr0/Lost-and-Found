@@ -20,10 +20,10 @@ public class Role {
 
     @ToString.Exclude
     @Enumerated(EnumType.STRING)
-    @Column(length = 20, name = "role_name")
-    private AppRole roleName;
+    @Column(length = 15, name = "role_name")
+    private EnumRole roleName;
 
-    public Role(AppRole roleName) {
+    public Role(EnumRole roleName) {
         this.roleName = roleName;
     }
 

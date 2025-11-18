@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 // Enable Swagger to have UI of API Endpoints
 @Configuration
-public class SwaggerConfig {
+public class Swagger {
 
     @Bean
     public OpenAPI swaggerAPI() {

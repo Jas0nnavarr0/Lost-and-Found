@@ -1,6 +1,6 @@
-package com.lostfound.backend.controller;
+package com.lostfound.backend.controllers;
 
-import com.lostfound.backend.model.AppRole;
+import com.lostfound.backend.model.EnumRole;
 import com.lostfound.backend.model.Role;
 import com.lostfound.backend.model.User;
 import com.lostfound.backend.repositories.RoleRepository;
@@ -8,8 +8,8 @@ import com.lostfound.backend.repositories.UserRepository;
 import com.lostfound.backend.auth.jsontoken.TokenUtilities;
 import com.lostfound.backend.auth.dtos.LoginDTO;
 import com.lostfound.backend.auth.dtos.SignupDTO;
-import com.lostfound.backend.auth.response.MessageResponse;
-import com.lostfound.backend.auth.response.UserInfoResponse;
+import com.lostfound.backend.auth.response_bodies.AuthResponse;
+import com.lostfound.backend.auth.response_bodies.UserDetailsResponse;
 import com.lostfound.backend.auth.custom_user_details.UserDetailsImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -37,13 +38,13 @@ public class AuthController {
     UserRepository userRepository;
 
     @Autowired
-    PasswordEncoder encoder;
-
-    @Autowired
     RoleRepository roleRepository;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private AuthenticationManager authManager;
 
     @Autowired
     private TokenUtilities tokenUtilities;
@@ -54,111 +55,114 @@ public class AuthController {
         return new ResponseEntity<>("endpoint authenticated", HttpStatus.FOUND);
     }
 
-
-    @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginDTO loginDTO) {
-        Authentication authentication;
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@Valid @RequestBody LoginDTO loginDTO) {
+        Authentication auth;
         try {
-            authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginDTO.getUsername(),
-                            loginDTO.getPassword()
-                    )
+            auth = authManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword())
             );
-        } catch (AuthenticationException exception) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("message", "Bad credentials");
-            map.put("status", false);
-
-            return new ResponseEntity<Object>(map, HttpStatus.NOT_FOUND);
+            System.out.println(auth.toString());
+        } catch (AuthenticationException e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("message", "Your username or password is incorrect");
+            return new ResponseEntity<Object>(error, HttpStatus.NOT_FOUND);
         }
+        SecurityContextHolder.getContext().setAuthentication(auth);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-
+        UserDetailsImpl userDetails = (UserDetailsImpl) auth.getPrincipal();
+        System.out.println(userDetails.getId());
         ResponseCookie jwtCookie = tokenUtilities.createJwtCookie(userDetails);
+        System.out.println(jwtCookie.toString());
+        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+        System.out.println(roles.toString());
+        UserDetailsResponse response = new UserDetailsResponse(userDetails.getId(), userDetails.getUsername(), roles, jwtCookie.toString());
 
-        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, jwtCookie.toString()).body(response);
+    }
 
-        UserInfoResponse response = new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), roles, jwtCookie.toString());
-
+    @PostMapping("/logout")
+    public ResponseEntity<?> logoutUser() {
+        ResponseCookie clearedCookie = tokenUtilities.retrieveClearedCookie();
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE,
-                        jwtCookie.toString())
-                .body(response);
+                clearedCookie.toString()).body(new AuthResponse("You have logged out."));
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupDTO signupDTO) {
+    public ResponseEntity<?> signUpUser(@Valid @RequestBody SignupDTO signupDTO) {
         if (userRepository.existsByUsername(signupDTO.getUsername())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
-        }
-        if (userRepository.existsByEmail(signupDTO.getEmail())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already taken!"));
+            return ResponseEntity.badRequest().body(new AuthResponse("Username is already in use."));
         }
         if (userRepository.existsByPhoneNumber(signupDTO.getPhoneNumber())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Phone number is already taken!"));
+            return ResponseEntity.badRequest().body(new AuthResponse("Phone number is already in use"));
         }
 
-        User user = new User(
-                signupDTO.getUsername(),
-                signupDTO.getEmail(),
-                encoder.encode(signupDTO.getPassword()),
-                signupDTO.getPhoneNumber()
-        );
+        if (userRepository.existsByEmail(signupDTO.getEmail())) {
+            return ResponseEntity.badRequest().body(new AuthResponse("Email is already in use."));
+        }
+
+        User createdUser = new User(signupDTO.getUsername(), signupDTO.getEmail(), passwordEncoder.encode(signupDTO.getPassword()), signupDTO.getPhoneNumber());
 
         Set<String> strRoles = signupDTO.getRole();
-        Set<Role> roles = new HashSet<>();
+        Set<Role> userRoles = new HashSet<>();
 
         if (strRoles == null) {
-            Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER).orElseThrow(() -> new RuntimeException("Error: Role is not found"));
-            roles.add(userRole);
+            Role userRole = roleRepository.findByRoleName(EnumRole.ROLE_USER)
+                    .orElseThrow(() -> new RuntimeException("Role does not exist"));
+            userRoles.add(userRole);
         } else {
             strRoles.forEach(role -> {
-                switch(role) {
-                    case "admin":
-                        Role adminRole = roleRepository.findByRoleName(AppRole.ROLE_ADMIN).orElseThrow(() -> new RuntimeException("Error: Role is not found"));
-                        roles.add(adminRole);
+                switch (role) {
+                    case "admin": {
+                        Role admin = roleRepository.findByRoleName(EnumRole.ROLE_ADMIN)
+                                .orElseThrow(() -> new RuntimeException("Role does not exist"));
+                        Role moderator = roleRepository.findByRoleName(EnumRole.ROLE_MODERATOR)
+                                .orElseThrow(() -> new RuntimeException("Role does not exist"));
+                        Role user = roleRepository.findByRoleName(EnumRole.ROLE_USER)
+                                .orElseThrow(() -> new RuntimeException("Role does not exist"));
+                        userRoles.add(admin);
+                        userRoles.add(moderator);
+                        userRoles.add(user);
                         break;
-                    case "moderator":
-                        Role moderatorRole = roleRepository.findByRoleName(AppRole.ROLE_MODERATOR).orElseThrow(() -> new RuntimeException("Error: Role is not found"));
-                        roles.add(moderatorRole);
+                    }
+                    case "moderator": {
+                        Role moderator = roleRepository.findByRoleName(EnumRole.ROLE_MODERATOR)
+                                .orElseThrow(() -> new RuntimeException("Role does not exist"));
+                        Role user = roleRepository.findByRoleName(EnumRole.ROLE_USER)
+                                .orElseThrow(() -> new RuntimeException("Role does not exist"));
+                        userRoles.add(moderator);
+                        userRoles.add(user);
                         break;
-                    default:
-                        Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER).orElseThrow(() -> new RuntimeException("Error: Role is not found"));
-                        roles.add(userRole);
+                    }
+                    default: {
+                        Role user = roleRepository.findByRoleName(EnumRole.ROLE_USER)
+                                .orElseThrow(() -> new RuntimeException("Role does not exist"));
+                        userRoles.add(user);
+                    }
                 }
             });
         }
 
-        user.setRoles(roles);
-        userRepository.save(user);
-        return ResponseEntity.ok(new MessageResponse("User has been registered successfully"));
+        createdUser.setRoles(userRoles);
+        userRepository.save(createdUser);
+        return ResponseEntity.ok(new AuthResponse("User has created an account"));
     }
 
-    @GetMapping("/username")
-    public String currentUserName(Authentication authentication) {
-        if(authentication == null) {
+    @GetMapping("/retrieve_username")
+    public String currentUserName(Authentication auth) {
+        if(auth != null) {
+            return auth.getName();
+        } else {
             return "";
         }
-        return authentication.getName();
     }
 
-    @GetMapping("/user")
-    public ResponseEntity<?> getUserDetails(Authentication authentication) {
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority()).collect(Collectors.toList());
-        UserInfoResponse response = new UserInfoResponse(userDetails.getId(), userDetails.getUsername(), roles);
+    @GetMapping("/retrieve_user_info")
+    public ResponseEntity<?> getUserInfo(Authentication auth) {
+        UserDetailsImpl userInfo = (UserDetailsImpl) auth.getPrincipal();
+        List<String> roles = userInfo.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
+        UserDetailsResponse response = new UserDetailsResponse(userInfo.getId(), userInfo.getUsername(), roles);
 
         return ResponseEntity.ok().body(response);
     }
-
-    @PostMapping("/signout")
-    public ResponseEntity<?> logoutUser() {
-        ResponseCookie cookie = tokenUtilities.retrieveClearedCookie();
-        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE,
-                        cookie.toString())
-                .body(new MessageResponse("You've been signed out!"));
-    }
-
 }

@@ -1,6 +1,6 @@
 package com.lostfound.backend.auth;
 
-import com.lostfound.backend.model.AppRole;
+import com.lostfound.backend.model.EnumRole;
 import com.lostfound.backend.model.Role;
 import com.lostfound.backend.repositories.RoleRepository;
 import com.lostfound.backend.repositories.UserRepository;
@@ -29,35 +29,34 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Autowired
-    UserDetailsService userDetailsService;
+    UnauthorizedCheck unauthorizedEntryPoint;
 
     @Autowired
-    UnauthorizedCheck unauthorizedHandler;
+    UserDetailsService userDetailsService;
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(userDetailsService);
-        authenticationProvider.setPasswordEncoder(passwordEncoder());
-
-        return authenticationProvider;
+    public DaoAuthenticationProvider daoAuthProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(encoderForPassword());
+        return authProvider;
     }
 
     // Expose authentication manager bean that will be used to input entered username and password
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
-        return authConfig.getAuthenticationManager();
+    public AuthenticationManager authManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public AuthorizationFilter authTokenFilter() {
+        return new AuthorizationFilter();
     }
 
     // Encoder bean to store hashed passwords
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public PasswordEncoder encoderForPassword() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthorizationFilter authenticationJwtTokenFilter() {
-        return new AuthorizationFilter();
     }
 
     @Bean
@@ -75,17 +74,14 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
-                        .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/test/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 );
 
-        http.authenticationProvider(authenticationProvider());
-        http.addFilterBefore(authenticationJwtTokenFilter(),
-                UsernamePasswordAuthenticationFilter.class);
-
+        http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.authenticationProvider(daoAuthProvider());
         http.headers(headers -> headers.frameOptions(
                 frameOptions -> frameOptions.sameOrigin()
         ));
@@ -95,24 +91,24 @@ public class SecurityConfig {
 
     // Create dummy database data for testing purposes
     @Bean
-    public CommandLineRunner initData(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public CommandLineRunner initData(RoleRepository roleRepository, UserRepository userRepository) {
         return args -> {
             // Retrieve or create roles
-            Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER)
+            Role userRole = roleRepository.findByRoleName(EnumRole.ROLE_USER)
                     .orElseGet(() -> {
-                        Role newUserRole = new Role(AppRole.ROLE_USER);
+                        Role newUserRole = new Role(EnumRole.ROLE_USER);
                         return roleRepository.save(newUserRole);
                     });
 
-            Role moderatorRole = roleRepository.findByRoleName(AppRole.ROLE_MODERATOR)
+            Role moderatorRole = roleRepository.findByRoleName(EnumRole.ROLE_MODERATOR)
                     .orElseGet(() -> {
-                        Role newModeratorRole = new Role(AppRole.ROLE_MODERATOR);
+                        Role newModeratorRole = new Role(EnumRole.ROLE_MODERATOR);
                         return roleRepository.save(newModeratorRole);
                     });
 
-            Role adminRole = roleRepository.findByRoleName(AppRole.ROLE_ADMIN)
+            Role adminRole = roleRepository.findByRoleName(EnumRole.ROLE_ADMIN)
                     .orElseGet(() -> {
-                        Role newAdminRole = new Role(AppRole.ROLE_ADMIN);
+                        Role newAdminRole = new Role(EnumRole.ROLE_ADMIN);
                         return roleRepository.save(newAdminRole);
                     });
         };

@@ -24,21 +24,19 @@ import java.util.Set;
 })
 public class User {
 
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Long userId;
 
     @NotBlank
-    @Size(max = 25)
+    @Size(max = 40)
     @Column(name = "username")
     private String username;
-
-    @NotBlank
-    @Size(max = 60)
-    @Email
-    @Column(name = "email")
-    private String email;
 
     @NotBlank
     @Size(max = 100)
@@ -50,9 +48,11 @@ public class User {
     @Column(name = "phone_number", length = 20, unique = true)
     private String phoneNumber;
 
-    @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @NotBlank
+    @Size(max = 60)
+    @Email
+    @Column(name = "email")
+    private String email;
 
     public User(String username, String email, String password, String phoneNumber) {
         this.password = password;
@@ -61,10 +61,7 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    @Getter
-    @Setter
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
