@@ -1,7 +1,7 @@
 import './App.css'
 import Posts from './components/posts/Posts'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import Login from './components/home/Login'
+import Login from './components/authentication/Login'
 import Navbar from './components/shared/Navbar'
 
 function App() {

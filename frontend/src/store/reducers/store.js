@@ -1,17 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { authenticationReducer } from "./authenticationReducer";
+import authReducer from "./authReducer";
 
-const user = localStorage.getItem("auth") ? JSON.parse(localStorage.getItem("auth")) : [];
+const user = localStorage.getItem("auth") ? JSON.parse(localStorage.getItem("auth")) : null;
 
-const initState = {
-    auth: { user: user}
+const initialState = {
+    auth: { user: user},
 }
 
 const store = configureStore({
     reducer: {
-        authentication: authenticationReducer,
+        auth: authReducer,
     },
-    preloadedState: initState,
+    preloadedState: initialState,
 });
 
 export default store;

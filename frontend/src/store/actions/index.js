@@ -1,0 +1,17 @@
+import api from "../../api/api"
+
+export const loginUser = (sentData, toast, navigate) => async (dispatch) => {
+    try {
+    const response = await api.post("/auth/login", sentData); // make sure endpoint matches backend
+    const data = response.data;
+
+    dispatch({ type: "LOGIN_USER", payload: data });
+    localStorage.setItem("auth", JSON.stringify(data));
+
+    toast.success("Successfully logged in");
+    navigate("/posts");
+  } catch (err) {
+    console.error(err);
+    toast.error(err?.response?.data?.message || "Internal Server Error");
+  }
+}
