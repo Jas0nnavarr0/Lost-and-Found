@@ -1,11 +1,22 @@
 import './App.css'
+import Posts from './components/posts/Posts'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Login from './components/home/Login'
+import Navbar from './components/shared/Navbar'
 
 function App() {
 
   return (
-    <h1 class="text-3x1 font-bold underline">
-      Tailwindcss test
-    </h1>
+    <Router>
+      <Navbar />
+      <Routes>
+        <Route path='/' element={ <Login />}/>
+        <Route path='/posts' element={ <Posts />}/>
+      </Routes>
+    </Router>
+    // <>
+    //   <Posts />
+    // </>
   )
 }
 
