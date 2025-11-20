@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { loginUser } from "../../store/actions";
 import toast from "react-hot-toast";
 
@@ -41,6 +41,13 @@ const Login = () => {
           >
             Login
           </button>
+
+          <p className="text-center text-sm mt-3">
+              Don't have an account?{" "}
+            <Link to="/register" className="text-blue-600 font-medium hover:underline">
+              Register here
+            </Link>
+          </p>
         </div>
       </form>
     </div>

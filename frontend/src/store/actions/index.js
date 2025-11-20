@@ -15,3 +15,21 @@ export const loginUser = (sentData, toast, navigate) => async (dispatch) => {
     toast.error(err?.response?.data?.message || "Internal Server Error");
   }
 }
+
+export const signupUser = (formData, toast, navigate) => async (dispatch) => {
+  try {
+    const response = await api.post("/auth/signup", formData);
+    toast.success(response.data.message || "Account created successfully");
+    navigate("/");
+  } catch (err) {
+    console.error(err);
+    toast.error(err?.response?.data?.message || "Signup failed");
+  }
+};
+
+export const logOutUser = (navigate) => (dispatch) => {
+  dispatch({ type: "SIGN_OUT"});
+
+  localStorage.removeItem("auth");
+  navigate("/");
+}

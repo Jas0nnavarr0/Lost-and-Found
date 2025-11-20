@@ -1,7 +1,15 @@
 import { FaStore } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { logOutUser } from "../../store/actions";
 
 const Navbar = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        dispatch(logOutUser(navigate));
+    };
 
     const path = useLocation().path;
 
@@ -20,10 +28,11 @@ const Navbar = () => {
                         </Link>
                     </li>
 
-                    <li className="font-[500] transition-all duration-150">
-                        <Link className="" to="/">
-                            Logout
-                        </Link>
+                    <li
+                        className="font-[500] cursor-pointer transition-all duration-150"
+                        onClick={handleLogout}
+                    >
+                        Logout
                     </li>
                 </ul>
             </div>
