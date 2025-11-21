@@ -52,8 +52,11 @@ public class TokenUtilities {
 
     public ResponseCookie createJwtCookie(UserDetailsImpl userPrincipal) {
         String token = createTokenByUsername(userPrincipal.getUsername());
-        ResponseCookie responseCookie = ResponseCookie.from(jsonCookie, token).path("/api").maxAge(18000)
-                .httpOnly(false)
+        ResponseCookie responseCookie = ResponseCookie.from(jsonCookie, token)
+                .path("/api")
+                .maxAge(18000)
+                .httpOnly(true)
+                .secure(false)
                 .build();
         return responseCookie;
     }
@@ -72,7 +75,12 @@ public class TokenUtilities {
                 .getPayload().getSubject();
     }
     public ResponseCookie retrieveClearedCookie() {
-        ResponseCookie cookie = ResponseCookie.from(jsonCookie, null).path("/api").build();
+        ResponseCookie cookie = ResponseCookie.from(jsonCookie, null)
+                .path("/api")
+                .maxAge(0)
+                .httpOnly(true)
+                .secure(false)
+                .build();
         return cookie;
     }
 

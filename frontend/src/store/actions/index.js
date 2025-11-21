@@ -9,7 +9,7 @@ export const loginUser = (sentData, toast, navigate) => async (dispatch) => {
     localStorage.setItem("auth", JSON.stringify(data));
 
     toast.success("Successfully logged in");
-    navigate("/posts");
+    navigate("/home");
   } catch (err) {
     console.error(err);
     toast.error(err?.response?.data?.message || "Internal Server Error");
@@ -27,8 +27,14 @@ export const signupUser = (formData, toast, navigate) => async (dispatch) => {
   }
 };
 
-export const logOutUser = (navigate) => (dispatch) => {
+export const logOutUser = (navigate) => async (dispatch) => {
   dispatch({ type: "SIGN_OUT"});
+
+  try {
+      await api.post("/auth/logout"); // clear cookie
+  } catch (e) {
+      // ignore errors
+  }
 
   localStorage.removeItem("auth");
   navigate("/");
