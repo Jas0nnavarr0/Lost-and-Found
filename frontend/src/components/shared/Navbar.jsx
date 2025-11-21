@@ -16,36 +16,34 @@ const Navbar = () => {
     const path = useLocation().path;
 
     return (
-        <div className="h-[70px] bg-gradient-to-r from-yellow-300 to-yellow-500 text-black z-50 flex items-center sticky top-0">
-            <div className="lg:px-14 sm:px-8 px-4 w-full flex justify-between">
+        <div className="h-[70px] bg-gradient-to-r from-yellow-300 to-yellow-500 text-black z-50 flex items-center sticky top-0 shadow-md">
+            <div className="lg:px-14 sm:px-8 px-4 w-full flex justify-between items-center">
+
                 <Link to="/home" className="flex items-center text-2xl font-bold">
-                    <FaBoxOpen />
+                    <FaBoxOpen className="mr-2 text-3xl" />
                     <span className="font-[Poppins]">Lost and Found</span>
                 </Link>
 
-                    {/* Moderator Tab */}
+                <ul className="flex items-center gap-8 text-lg font-medium">
+
                     {hasRole(user, "ROLE_MODERATOR") && (
-                        <li className="font-[500] transition-all duration-150">
+                        <li className="hover:text-white transition">
                             <Link to="/moderator">Moderator</Link>
                         </li>
                     )}
 
-                    {/* Admin Tab */}
                     {hasRole(user, "ROLE_ADMIN") && (
-                        <li className="font-[500] transition-all duration-150">
+                        <li className="hover:text-white transition">
                             <Link to="/admin">Admin</Link>
                         </li>
                     )}
 
-                <ul className="flex text-black gap-5">
-                    <li className="font-[500] transition-all duration-150">
-                        <Link className="" to="/home">
-                            Home
-                        </Link>
+                    <li className="hover:text-white transition">
+                        <Link to="/home">Home</Link>
                     </li>
 
                     <li
-                        className="font-[500] cursor-pointer transition-all duration-150"
+                        className="cursor-pointer hover:text-white transition"
                         onClick={handleLogout}
                     >
                         Logout

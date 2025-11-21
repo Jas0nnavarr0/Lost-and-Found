@@ -1,4 +1,4 @@
-package com.lostfound.backend.controller;
+package com.lostfound.backend.controllers;
 
 import com.lostfound.backend.services.CategoryService;
 import com.lostfound.backend.model.Category;
