@@ -1,6 +1,6 @@
 package com.lostfound.backend.exception_handling;
 
-import com.lostfound.backend.dtos.ApiResponse;
+import com.lostfound.backend.dtos.ApiOutput;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,10 +15,10 @@ public class CentralExceptionCatcher {
 
     // Recommended to throw when a row is unable to be found in a table (Example: through findBy queries)
     @ExceptionHandler(EntryNotFoundException.class)
-    public ResponseEntity<ApiResponse> entryNotFoundException(EntryNotFoundException e) {
+    public ResponseEntity<ApiOutput> entryNotFoundException(EntryNotFoundException e) {
         String body = e.getMessage();
-        ApiResponse apiResponse = new ApiResponse(body, false);
-        return new ResponseEntity<>(apiResponse, HttpStatus.NOT_FOUND);
+        ApiOutput apiOutput = new ApiOutput(body, false);
+        return new ResponseEntity<>(apiOutput, HttpStatus.NOT_FOUND);
     }
 
     // Called when validations fail at the controller level
@@ -35,10 +35,10 @@ public class CentralExceptionCatcher {
 
     //  Recommended to throw when encountering a business logic error (Example: post not found through keyword "calculator")
     @ExceptionHandler(ApiException.class)
-    public ResponseEntity<ApiResponse> ApiException(ApiException e) {
+    public ResponseEntity<ApiOutput> ApiException(ApiException e) {
         String body = e.getMessage();
-        ApiResponse apiResponse = new ApiResponse(body, false);
-        return new ResponseEntity<>(apiResponse, HttpStatus.BAD_REQUEST);
+        ApiOutput apiOutput = new ApiOutput(body, false);
+        return new ResponseEntity<>(apiOutput, HttpStatus.BAD_REQUEST);
     }
 
     // When users select more than 3 categories, show this msg
