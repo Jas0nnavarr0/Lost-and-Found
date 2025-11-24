@@ -20,13 +20,11 @@ function AppContent() {
     <>
       {!hideNavbar && <Navbar />}
       <Routes>
-        {/* Public routes */}
         <Route element={<PrivateRoute isPublic />}>
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
         </Route>
 
-        {/* Private routes */}
         <Route element={<PrivateRoute />}>
           <Route path="/home" element={<HomeProfile />} />
           <Route path="/moderator" element={<ModeratorRoute><ModeratorPage /></ModeratorRoute>} />
