@@ -1,77 +1,137 @@
-import { useState } from "react";
-import { FaMessage } from "react-icons/fa6";
-import PostModal from "./PostModal";
+import React from "react";
 
-const PostCard = ({
-    postId,
-    postTitle,
-    image,
-    description,
-    location,
-}) => {
-    const [openPostModal, setOpenPostModal] = useState(false);
-    const [selectedPost, setSelectedPost] = useState("");
+export default function PostCard2({ post, onClick }) {
+  const truncate = (text, maxLength = 70) => {
+    if (!text) return "";
+    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
+  };
+  return (
+    <div
+      onClick={onClick}
+      style={{
+        display: "flex",
+        backgroundColor: "#fff",
+        borderRadius: "12px",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+        overflow: "hidden",
+        padding: "15px",
+        transition: "transform 0.2s ease, box-shadow 0.2s ease",
+        cursor: "pointer",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = "translateY(-4px)";
+        e.currentTarget.style.boxShadow = "0 4px 14px rgba(0,0,0,0.15)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = "translateY(0)";
+        e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)";
+      }}
+    >
+      {/* Left image */}
+      <div
+        style={{
+          flex: "0 0 120px",
+          height: "120px",
+          borderRadius: "8px",
+          overflow: "hidden",
+          marginRight: "15px",
+        }}
+      >
+        <img
+          src={
+            post.image ||
+            "https://images.unsplash.com/photo-1504215680853-026ed2a45def?auto=format&fit=crop&w=300&q=80"
+          }
+          alt={post.item_name || post.title}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+          }}
+        />
+      </div>
 
-    const handlePostView = (post) => {
-        setSelectedPost(post);
-        setOpenPostModal(true);
-    }
-
-    return (
-        // Open this post when a user clicks on it
-        <div className="border overflow-hidden transition-shadow rounded=lg shadow-lg">
-            <div onClick={() => {
-                handlePostView({
-                    id: postId,
-                    postTitle,
-                    image,
-                    description,
-                    location,
-                })
-            }}     
-                    className="w-full overflow-hidden aspect-[6/4]">
-                <img className="transform hover:scale-104 w-full h-full transition-transform duration-400 cursor-pointer"
-                src={image}
-                alt={postTitle}>
-                </img>
-            </div>
-            <div className="p-4">
-                <h2 onClick={() => {
-                    handlePostView({
-                        id: postId,
-                        postTitle,
-                        image,
-                        description,
-                        location,
-                        })
-                    }}
-                    className="text-lg mb-1 font-semibold cursor-pointer">
-                    {postTitle}
-                </h2>
-                <div className="max-h-20 min-h-20">
-                    <p className="text-small text-gray-500">{description}</p>
-                </div>
-
-                <div className="flex flex-col">
-                    <span className="text-gray-600">
-                        Found in: {location}
-                    </span>
-                </div>
-
-                <button 
-                    className={`text-white bg-blue-500 flex justify-center opacity-90 hover:bg-blue-700  py-2 px-3 rounded-lg items-center transition-colors duration-200 w-36 `}>
-                        <FaMessage className="mr-2"/>
-                        {"Message"}
-                </button>
-            </div>
-            <PostModal 
-                open={openPostModal}
-                setOpen={setOpenPostModal}
-                post={selectedPost}
-
-            />
+      {/* Right content */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+        <div style={{ marginBottom: "8px" }}>
+          <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "bold", color: "#222" }}>
+            {post.item_name || post.title}
+          </h3>
+          <p style={{ margin: "4px 0", color: "#007bff", fontSize: "14px" }}>
+            {post.category || "Uncategorized"}
+          </p>
         </div>
-    );
-}
 
-export default PostCard;
+        <p
+          style={{
+            margin: "6px 0",
+            color: "#555",
+            fontSize: "14px",
+            lineHeight: "1.4",
+            flex: "1 1 auto",
+          }}
+        >
+          {truncate(post.description)}
+        </p>
+
+        <p style={{ margin: "4px 0", fontSize: "13px", color: "#777" }}>
+          📍 {post.location || "Unknown location"}
+        </p>
+
+        <p style={{ margin: "4px 0", fontSize: "12px", color: "#aaa" }}>
+          🕒 {post.date || "Posted recently"}
+        </p>
+
+        {/* Buttons — prevent modal from opening */}
+        <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+          <button
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              flex: 1,
+              backgroundColor: "#007bff",
+              color: "#fff",
+              border: "none",
+              padding: "8px 0",
+              borderRadius: "6px",
+              cursor: "pointer",
+              fontWeight: "500",
+            }}
+          >
+            Message
+          </button>
+
+          <button
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              flex: 1,
+              backgroundColor: "#f8f9fa",
+              color: "#333",
+              border: "1px solid #ddd",
+              padding: "8px 0",
+              borderRadius: "6px",
+              cursor: "pointer",
+            }}
+          >
+            Save
+          </button>
+
+          <button
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              flex: 1,
+              backgroundColor: "#ffe5e5",
+              color: "#b20000",
+              border: "none",
+              padding: "8px 0",
+              borderRadius: "6px",
+              cursor: "pointer",
+              fontWeight: "500",
+            }}
+          >
+            Report
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
