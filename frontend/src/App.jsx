@@ -11,6 +11,8 @@ import ModeratorRoute from './components/shared/ModeratorRoute'
 import AdminRoute from './components/shared/AdminRoute'
 import ModeratorPage from './pages/ModeratorPage'
 import AdminPage from './pages/AdminPage'
+import PostPage from './components/posts/PostPage'
+import CreatePostForm from './components/posts/CreatePostForm'
 
 function AppContent() {
   const location = useLocation();
@@ -29,8 +31,8 @@ function AppContent() {
           <Route path="/home" element={<HomeProfile />} />
           <Route path="/moderator" element={<ModeratorRoute><ModeratorPage /></ModeratorRoute>} />
           <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
-
-          <Route path="/posts" element={<Posts />} />
+          <Route path="/posts" element={<PostPage />} />
+          <Route path="/create_post" element={<CreatePostForm />} />
         </Route>
       </Routes>
     </>

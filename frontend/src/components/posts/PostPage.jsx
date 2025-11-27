@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import PostCard from "./PostCard2";
+import PostCard from "./PostCard";
 import Filter from "./Filter";
-import PostModal from "./PostModal2";
+import PostModal from "./PostModal";
 
 export default function PostsPage() {
   const [posts, setPosts] = useState([]);
