@@ -143,8 +143,8 @@ export default function PostModal2({ post, onClose }) {
             flexDirection: "column",
             gap: "12px",
 
-            height: "450px",         // 🔥 FIXED HEIGHT — matches image height
-            overflowY: "auto",       // 🔥 Scroll when content is long
+            height: "450px",
+            overflowY: "auto",
           }}
         >
           <h2 style={{ margin: 0, fontSize: "26px", fontWeight: "bold" }}>{post.title}</h2>

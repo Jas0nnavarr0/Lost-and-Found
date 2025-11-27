@@ -13,7 +13,6 @@ import {
   User,
 } from 'lucide-react';
 
-// Setting the post type to 'found' permanently
 const POST_TYPE = 'found';
 
 const CATEGORIES = [
@@ -21,12 +20,9 @@ const CATEGORIES = [
 ];
 
 const CreatePostForm = () => {
-  // Removed 'step' state as the form is now a single page
 
-  // State for mock image uploads
   const [images, setImages] = useState([]);
 
-  // Form state structure, adjusted for 'found' focus
   const [form, setForm] = useState({
     title: '',
     category: '',
@@ -36,7 +32,6 @@ const CreatePostForm = () => {
     securityQuestion: '',
   });
 
-  // Derived styles based on fixed 'found' type
   const primaryBg = 'bg-yellow-400';
   const buttonTextClass = 'text-blue-900';
 
@@ -50,7 +45,6 @@ const CreatePostForm = () => {
   };
 
   const handleImageUpload = () => {
-    // --- MOCK IMAGE UPLOAD LOGIC ---
     if (images.length < 4) {
       setImages([...images, 'https://placehold.co/200x200/4c4c4c/ffffff?text=Item']);
     }
@@ -61,7 +55,6 @@ const CreatePostForm = () => {
   };
 
   const handlePublish = async () => {
-    // Build your data object for the backend
     const postData = {
       postType: POST_TYPE,
       title: form.title,
@@ -69,12 +62,11 @@ const CreatePostForm = () => {
       description: form.description,
       date: form.date,
       location: form.location,
-      securityQuestion: form.securityQuestion,
-      images: images, // right now these are placeholder URLs
+      images: images,
     };
 
     try {
-      const res = await createPost(postData);  // <-- send to backend
+      const res = await createPost(postData);  //send to backend
       console.log("Post saved to backend:", res.data);
       alert("Post created successfully!");
 
@@ -96,7 +88,6 @@ const CreatePostForm = () => {
   };
 
 
-  // Handle form submission
   const handleSubmit = (e) => {
       e.preventDefault();
       handlePublish();
@@ -126,7 +117,7 @@ const CreatePostForm = () => {
              I Found Something
           </div>
 
-          {/* --- Form Content (Combined All Fields) --- */}
+          {/* --- Form Content --- */}
           <div className="p-6 sm:p-8 space-y-8">
 
             {/* SECTION 1: Details, Location, and Photos */}
@@ -255,19 +246,19 @@ const CreatePostForm = () => {
             </section>
           </div>
 
-          {/* --- Footer Actions (Post and Cancel Button) --- */}
+          {/* --- Footer Actions -- */}
           <div className="p-6 border-t border-gray-100 bg-gray-50 flex justify-between items-center">
 
             <button
-              type="button" // Use type="button" for actions that shouldn't submit the form
-              onClick={handlePublish} // Re-using handlePublish for simplicity in the mock
+              type="button"
+              onClick={handlePublish}
               className="px-6 py-2.5 text-gray-500 font-bold hover:text-gray-900 transition rounded-xl"
             >
               Cancel
             </button>
 
             <button
-              type="submit" // Use type="submit" to trigger the form's onSubmit handler
+              type="submit"
               className={`px-8 py-3 rounded-xl font-bold text-lg shadow-lg transform transition hover:-translate-y-0.5 active:translate-y-0 active:shadow-md flex items-center gap-2
                 ${primaryBg} ${buttonTextClass} hover:opacity-90`}
             >

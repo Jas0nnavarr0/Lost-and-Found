@@ -20,7 +20,7 @@ const Filter = () => {
             <ChevronDown size={14} />
           </button>
 
-          {/* Location Dropdown Design (Static Mockup) */}
+          {/* Location Dropdown Design */}
           {false && (
             <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-xl shadow-xl border border-gray-100 p-4 z-50">
                 <h4 className="font-bold text-gray-800 mb-2">Location Settings</h4>
@@ -52,7 +52,7 @@ const Filter = () => {
             <ChevronDown size={14} />
           </button>
 
-          {/* Date Dropdown Design (Static Mockup) */}
+          {/* Date Dropdown Design */}
           {false && (
             <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 p-2 z-50">
                 <button className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium bg-blue-50 text-blue-700 flex items-center justify-between">
@@ -76,7 +76,7 @@ const Filter = () => {
             <ChevronDown size={14} />
           </button>
 
-          {/* Categories Dropdown Design (Static Mockup) */}
+          {/* Categories Dropdown*/}
           {false && (
             <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-gray-100 p-3 z-50">
                 <div className="max-h-60 overflow-y-auto space-y-1 pr-1 custom-scrollbar">
@@ -98,7 +98,6 @@ const Filter = () => {
           )}
         </div>
 
-        {/* --- Action Buttons (Right Aligned) --- */}
         <div className="ml-auto flex items-center gap-4">
           <button className="text-xs text-gray-500 hover:text-gray-900 font-medium whitespace-nowrap">
             Clear Filters

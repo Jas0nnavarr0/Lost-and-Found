@@ -2,10 +2,13 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5000/api/posts";
 
-export const createPost = (post) => {
-  return axios.post(API_URL, post);
-};
+export const createPost = (postData) => {
+  const token = localStorage.getItem("token");  // <--- IMPORTANT
 
-export const getPosts = () => {
-  return axios.get(API_URL);
+  return axios.post(API_URL, postData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    }
+  });
 };
