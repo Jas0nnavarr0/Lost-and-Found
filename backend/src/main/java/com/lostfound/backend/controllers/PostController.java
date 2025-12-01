@@ -59,6 +59,13 @@ public class PostController {
         return postService.getAllUsers();
     }
 
+    @GetMapping("/mine")
+    public List<PostResponseDTO> getMyPosts(
+            @AuthenticationPrincipal UserDetailsImpl currentUser
+    ) {
+        return postService.getPostsByUser(currentUser);
+    }
+
     //@RequestMapping("/post/{id}")
 }
 

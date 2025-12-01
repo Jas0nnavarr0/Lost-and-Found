@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { getUserInfo } from "../api/users";
 import { FaRegSmileBeam } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { getMyPosts } from "../api/posts";
+import PostCard from "../components/posts/PostCard";
 
 const HomeProfile = () => {
     // const [user, setUser] = useState(null);
@@ -24,11 +26,18 @@ const HomeProfile = () => {
         // </div> ../../public/home_banner.jpg
 
     const [userInfo, setUserInfo] = useState(null);
+    const [myPosts, setMyPosts] = useState([]);
 
     useEffect(() => {
         getUserInfo()
             .then(res => setUserInfo(res.data))
             .catch(err => console.error("Error fetching user info:", err));
+    }, []);
+
+    useEffect(() => {
+        getMyPosts()
+            .then(res => setMyPosts(res.data))
+            .catch(err => console.error("Error fetching my posts:", err));
     }, []);
 
      return (
@@ -77,11 +86,29 @@ const HomeProfile = () => {
                 </div>
             </div>
 
+            <div className="px-10 mb-20">
+
+            <h2 className="text-xl font-bold mb-4">Your Posts</h2>
+
+                {myPosts.length === 0 && (
+                    <p className="text-gray-500">You have no posts yet.</p>
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {myPosts.map(post => (
+                        <PostCard 
+                            key={post.id}
+                            data={post}
+                            onClick={() => {}} // optional
+                        />
+                    ))}
+                </div>
+
+            </div>
+
 
         </div>
-);
-
-    
+    );
 };
 
 export default HomeProfile;

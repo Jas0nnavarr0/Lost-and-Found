@@ -73,6 +73,26 @@ public class PostService {
                 .collect(Collectors.toList());
     }
 
+    public List<PostResponseDTO> getPostsByUser(UserDetailsImpl currentUser) {
+
+        User user = userRepository.findById(currentUser.getId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        return postRepository.findByUser(user)
+                .stream()
+                .map(post -> new PostResponseDTO(
+                        post.getId(),
+                        post.getUser().getUsername(),
+                        post.getTitle(),
+                        post.getDescription(),
+                        post.getLocation(),
+                        post.getCreatedAt(),
+                        post.getCategories(),
+                        post.getImages()
+                ))
+                .collect(Collectors.toList());
+    }
+
     // UPDATE POST
     public PostResponseDTO updatePost(Long id, PostUpdateRequestDTO dto, UserDetailsImpl currentUser) {
 
