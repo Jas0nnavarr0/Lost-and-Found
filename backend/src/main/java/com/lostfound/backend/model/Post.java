@@ -26,7 +26,7 @@ public class Post {
 
     // connect to a user
     @ManyToOne
-    @JoinColumn(name = "user_id") // Defines a foreign key
+    @JoinColumn(name = "user_id", nullable = false) // Defines a foreign key
     private User user;
 
     @Column(columnDefinition = "TEXT", nullable = false)
