@@ -1,89 +1,91 @@
 import React from "react";
 
-export default function TestCard({ test, onClick }) {
-  const truncate = (text, maxLength = 70) => {
-    if (!text) return "";
-    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
-  };
+import { UserCircle, MapPin, Calendar, Images } from "lucide-react";
+import { format } from "date-fns";
 
-  const image =
-    test.image ||
-    (test.images && test.images[0]) ||
-    "https://images.unsplash.com/photo-1504215680853-026ed2a45def?auto=format&fit=crop&w=300&q=80";
-
+export default function PostCard({ data, onClick }) {
   return (
     <div
       onClick={onClick}
-      className="
-        bg-white rounded-xl p-4 shadow-md border border-gray-100 cursor-pointer
-        flex gap-4 transition transform hover:-translate-y-1 hover:shadow-xl
-      "
+      className="cursor-pointer bg-white shadow-md border border-gray-100 rounded-2xl p-6 flex flex-col gap-4 transition hover:shadow-lg"
     >
-      {/* LEFT IMAGE */}
-      <div className="w-[120px] h-[120px] rounded-lg overflow-hidden flex-shrink-0">
-        <img
-          src={image}
-          alt={test.title}
-          className="w-full h-full object-cover"
-        />
-      </div>
-
-      {/* RIGHT CONTENT */}
-      <div className="flex flex-col flex-1">
-        {/* Title + Category */}
-        <div className="mb-1">
-          <h3 className="text-lg font-bold text-gray-900 leading-tight">
-            {test.title}
-          </h3>
-          <p className="text-sm text-blue-600">
-            {test.category || "Uncategorized"}
+      {/* Username */}
+      <div className="flex items-center gap-3">
+        <UserCircle size={40} className="text-blue-500" />
+        <div>
+          <p className="text-sm text-gray-500">Posted by</p>
+          <p className="font-semibold text-gray-900">
+            {data.username || "Unknown"}
           </p>
         </div>
+      </div>
 
-        {/* Description */}
-        <p className="text-sm text-gray-600 flex-1">
-          {truncate(test.description)}
-        </p>
+      {/* Title */}
+      <div>
+        <p className="text-xs text-gray-500 mb-1">Title</p>
+        <p className="font-bold text-gray-900 text-lg">{data.title}</p>
+      </div>
 
-        {/* Location */}
-        <p className="text-sm text-gray-500 mt-1">
-          📍 {test.location || "Unknown location"}
-        </p>
+      {/* Description */}
+      <div>
+        <p className="text-xs text-gray-500 mb-1">Description</p>
+        <p className="text-gray-700 line-clamp-3">{data.description}</p>
+      </div>
 
-        {/* Date */}
-        <p className="text-xs text-gray-400">
-          🕒 {test.date || test.createdAt || "Recently posted"}
-        </p>
+      {/* Location */}
+      <div className="flex items-center gap-2 text-gray-700">
+        <MapPin size={18} className="text-gray-500" />
+        <span className="text-sm">{data.location || "Unknown location"}</span>
+      </div>
 
-        {/* BUTTONS — prevent modal from opening */}
-        <div className="flex gap-2 mt-3">
-          <button
-            onClick={(e) => e.stopPropagation()}
-            className="flex-1 bg-blue-500 text-white text-sm py-2 rounded-lg font-medium hover:bg-blue-600"
-          >
-            Message
-          </button>
+      {/* Date */}
+      <div className="flex items-center gap-2 text-gray-700">
+        <Calendar size={18} className="text-gray-500" />
+        <span className="text-sm">
+          {data.createdAt ? format(new Date(data.createdAt), "PPP") : "N/A"}
+        </span>
+      </div>
 
-          <button
-            onClick={(e) => e.stopPropagation()}
-            className="flex-1 bg-gray-100 text-gray-700 text-sm py-2 rounded-lg border hover:bg-gray-200"
-          >
-            Save
-          </button>
-          <button
-            className="flex-1 bg-yellow-400 text-white rounded-lg py-2 font-semibold hover:bg-yellow-500"
-            onClick={() => setIsEditing(true)}
-          >
-            Edit
-          </button>
+      {/* Categories */}
+      <div>
+        <p className="text-xs text-gray-500 mb-1">Categories</p>
+        {data.categories?.length > 0 ? (
+          <div className="flex flex-wrap gap-2">
+            {data.categories.map((cat, i) => (
+              <span
+                key={i}
+                className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full"
+              >
+                {cat}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500 text-sm">No categories</p>
+        )}
+      </div>
 
-          <button
-            onClick={(e) => e.stopPropagation()}
-            className="flex-1 bg-red-100 text-red-600 text-sm py-2 rounded-lg font-medium hover:bg-red-200"
-          >
-            Report
-          </button>
+      {/* Images */}
+      <div>
+        <div className="flex items-center gap-2 mb-2">
+          <Images size={18} className="text-gray-500" />
+          <p className="text-xs text-gray-500">Images</p>
         </div>
+
+        {data.images?.length > 0 ? (
+          <div className="grid grid-cols-2 gap-3">
+            {data.images.map((img, idx) => (
+              <img
+                key={idx}
+                src={img}
+                alt="uploaded"
+                className="w-full aspect-square rounded-lg object-cover border border-gray-200 shadow-sm"
+              />
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500 text-sm">No images</p>
+        )}
       </div>
     </div>
   );
