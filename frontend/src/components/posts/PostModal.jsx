@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import axios from "axios";
 import { startConversation } from "../../api/conversations";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function Modal({ data, onClose, onDelete, onUpdate }) {
   if (!data) return null;
@@ -16,6 +17,9 @@ export default function Modal({ data, onClose, onDelete, onUpdate }) {
       ];
 
   const navigate = useNavigate();
+
+  const authUser = useSelector((state) => state.auth.user);
+  const isMyPost = authUser?.username === data.username;
   
   const [index, setIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
@@ -203,11 +207,13 @@ export default function Modal({ data, onClose, onDelete, onUpdate }) {
               </div>
 
               <div className="flex gap-3 mt-auto">
+                {!isMyPost && ( 
                 <button 
                   onClick={handleMessageClick}
                   className="flex-1 bg-blue-500 text-white rounded-lg py-2 font-semibold hover:bg-blue-600">
                   Message
                 </button>
+                )}
 
                 <button
                   onClick={() => setIsEditing(true)}
