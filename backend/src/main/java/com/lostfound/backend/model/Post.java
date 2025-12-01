@@ -2,60 +2,67 @@ package com.lostfound.backend.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity
-@Table(name = "posts")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@NoArgsConstructor
+@Entity
+@Table(name="tests")
 public class Post {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int postId;
+    private Long id;
 
-    @Column(length = 1000, nullable = false)
-    private String title;
-
-    // connect to a user
     @ManyToOne
-    @JoinColumn(name = "user_id") // Defines a foreign key
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String description;
+    @Column(length = 100, nullable = false)
+    private String title;
 
-    @ManyToMany
-    @JoinTable(
-            name = "post_categories",
-            joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
-    private List<Category> categories;
+    @Column(columnDefinition = "TEXT", nullable = true)
+    private String description;
 
     @Column(length = 100)
     private String location;
 
-    @ElementCollection
-    private List<String> imageUrls;
-
-    @Column(name = "is_found")
-    private boolean isFound = false;
-
     @Column(updatable = false)
     private LocalDateTime createdAt;
-
     // JPA runs the following method right before the entity is inserted into the database for the first time.
     // automatically creates a createdAt time when the post is first saved
     @PrePersist
-    protected void serCreatedAt() {
+    protected void setCreatedAt() {
         this.createdAt = LocalDateTime.now();
     }
+
+    @ElementCollection(targetClass = Category.class)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "test_categories", joinColumns = @JoinColumn(name = "test_id"))
+    @Column(name = "category")
+    private List<Category> categories;
+
+    @ElementCollection
+    @CollectionTable(name = "test_images", joinColumns = @JoinColumn(name = "test_id"))
+    @Column(name = "image_url")
+    private List<String> images;
+
+    //@Column(name = "is_found")
+    //private boolean isFound = false;
+
+    public Post(User user, String title, String description, String location, List<Category> categories, List<String> images) {
+        this.user = user;
+        this.title = title;
+        this.description = description;
+        this.location = location;
+        this.categories = categories;
+        this.images = images;
+    }
+
 }
+

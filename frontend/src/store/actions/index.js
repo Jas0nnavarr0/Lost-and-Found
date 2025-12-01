@@ -2,7 +2,7 @@ import api from "../../api/api"
 
 export const loginUser = (sentData, toast, navigate) => async (dispatch) => {
     try {
-    const response = await api.post("/auth/login", sentData); 
+    const response = await api.post("/auth/login", sentData);
     const data = response.data;
 
     dispatch({ type: "LOGIN_USER", payload: data });
