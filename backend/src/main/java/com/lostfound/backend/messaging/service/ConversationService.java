@@ -1,6 +1,7 @@
 package com.lostfound.backend.messaging.service;
 
 import com.lostfound.backend.auth.custom_user_details.UserDetailsImpl;
+import com.lostfound.backend.messaging.dto.ConversationDTO;
 import com.lostfound.backend.messaging.model.Conversation;
 import com.lostfound.backend.messaging.repository.ConversationRepository;
 import com.lostfound.backend.model.Post;
@@ -49,8 +50,23 @@ public class ConversationService {
                 });
     }
 
-    public List<Conversation> getMyConversations(UserDetailsImpl currentUser) {
-        User u = userRepo.findById(currentUser.getId()).orElseThrow();
-        return conversationRepo.findByUser1OrUser2(u, u);
+    public List<ConversationDTO> getMyConversations(UserDetailsImpl currentUser) {
+
+        User u = userRepo.findById(currentUser.getId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        return conversationRepo.findByUser1OrUser2(u, u)
+                .stream()
+                .map(c -> new ConversationDTO(
+                        c.getId(),
+                        c.getPost().getId(),
+                        c.getPost().getTitle(),
+                        c.getUser1().getUserId(),
+                        c.getUser1().getUsername(),
+                        c.getUser2().getUserId(),
+                        c.getUser2().getUsername(),
+                        c.getCreatedAt()
+                ))
+                .toList();
     }
 }

@@ -1,6 +1,7 @@
 package com.lostfound.backend.messaging.service;
 
 import com.lostfound.backend.auth.custom_user_details.UserDetailsImpl;
+import com.lostfound.backend.messaging.dto.MessageDTO;
 import com.lostfound.backend.messaging.model.Conversation;
 import com.lostfound.backend.messaging.model.Message;
 import com.lostfound.backend.messaging.repository.ConversationRepository;
@@ -43,7 +44,7 @@ public class MessageService {
         return messageRepo.save(m);
     }
 
-    public List<Message> getMessages(Long conversationId, UserDetailsImpl currentUser) {
+    public List<MessageDTO> getMessages(Long conversationId, UserDetailsImpl currentUser) {
 
         Conversation convo = conversationRepo.findById(conversationId)
                 .orElseThrow(() -> new IllegalArgumentException("Conversation not found"));
@@ -54,6 +55,16 @@ public class MessageService {
             throw new AccessDeniedException("Not part of this conversation");
         }
 
-        return messageRepo.findByConversationOrderBySentAtAsc(convo);
+        return messageRepo.findByConversationOrderBySentAtAsc(convo)
+                .stream()
+                .map(m -> new MessageDTO(
+                        m.getId(),
+                        convo.getId(),
+                        m.getSender().getUserId(),
+                        m.getSender().getUsername(),
+                        m.getContent(),
+                        m.getSentAt()
+                ))
+                .toList();
     }
 }

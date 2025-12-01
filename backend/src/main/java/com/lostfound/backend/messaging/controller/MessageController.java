@@ -1,6 +1,7 @@
 package com.lostfound.backend.messaging.controller;
 
 import com.lostfound.backend.auth.custom_user_details.UserDetailsImpl;
+import com.lostfound.backend.messaging.dto.MessageDTO;
 import com.lostfound.backend.messaging.model.Message;
 import com.lostfound.backend.messaging.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class MessageController {
     }
 
     @GetMapping("/{conversationId}")
-    public List<Message> getMessages(
+    public List<MessageDTO> getMessages(
             @PathVariable Long conversationId,
             @AuthenticationPrincipal UserDetailsImpl currentUser
     ) {

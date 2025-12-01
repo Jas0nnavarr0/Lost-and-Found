@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { X, ChevronLeft, ChevronRight, MapPin, Calendar, User } from "lucide-react";
 import { format } from "date-fns";
 import axios from "axios";
+import { startConversation } from "../../api/conversations";
+import { useNavigate } from "react-router-dom";
 
 export default function Modal({ data, onClose, onDelete, onUpdate }) {
   if (!data) return null;
@@ -13,6 +15,8 @@ export default function Modal({ data, onClose, onDelete, onUpdate }) {
         "https://images.unsplash.com/photo-1504215680853-026ed2a45def?auto=format&fit=crop&w=600&q=80",
       ];
 
+  const navigate = useNavigate();
+  
   const [index, setIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -26,6 +30,16 @@ export default function Modal({ data, onClose, onDelete, onUpdate }) {
 
   const next = () => setIndex((index + 1) % images.length);
   const prev = () => setIndex((index - 1 + images.length) % images.length);
+
+  const handleMessageClick = async () => {
+    try {
+      const res = await startConversation(data.id);
+      navigate(`/messages/${res.data.id}`)
+    } catch (err) {
+      console.error("Failed to start conversation:", err);
+      alert("Could not start conversation.");
+    }
+  };
 
   // DELETE (with credentials)
   const handleDelete = async () => {
@@ -189,7 +203,9 @@ export default function Modal({ data, onClose, onDelete, onUpdate }) {
               </div>
 
               <div className="flex gap-3 mt-auto">
-                <button className="flex-1 bg-blue-500 text-white rounded-lg py-2 font-semibold hover:bg-blue-600">
+                <button 
+                  onClick={handleMessageClick}
+                  className="flex-1 bg-blue-500 text-white rounded-lg py-2 font-semibold hover:bg-blue-600">
                   Message
                 </button>
 

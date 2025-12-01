@@ -1,6 +1,7 @@
 package com.lostfound.backend.messaging.controller;
 
 import com.lostfound.backend.auth.custom_user_details.UserDetailsImpl;
+import com.lostfound.backend.messaging.dto.ConversationDTO;
 import com.lostfound.backend.messaging.model.Conversation;
 import com.lostfound.backend.messaging.service.ConversationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class ConversationController {
     }
 
     @GetMapping
-    public List<Conversation> mine(@AuthenticationPrincipal UserDetailsImpl currentUser) {
+    public List<ConversationDTO> mine(@AuthenticationPrincipal UserDetailsImpl currentUser) {
         return convoService.getMyConversations(currentUser);
     }
 }
