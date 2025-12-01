@@ -12,7 +12,8 @@ const AdminPage = () => {
                 fetchUsers(),
                 fetchModerators()
             ]);
-
+            console.log("Users API:", usersRes.data);
+            console.log("Moderators API:", modRes.data);
             setUsers(usersRes.data);
             setModerators(modRes.data);
         } catch (err) {
