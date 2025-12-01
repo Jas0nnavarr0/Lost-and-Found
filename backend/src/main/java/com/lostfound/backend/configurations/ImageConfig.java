@@ -10,5 +10,7 @@ public class ImageConfig implements WebMvcConfigurer{
         // Map every request /uploads/** → files in the local "uploads" folder
         registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:uploads/");
+        registry.addResourceHandler("/test/uploads/**")
+                .addResourceLocations("file:uploads/");
     }
 }

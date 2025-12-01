@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -78,6 +79,11 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/api/test/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers("/api/posts/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/test/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/api/test/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/api/test/**").permitAll()
                         .anyRequest().authenticated()
                 );
 
