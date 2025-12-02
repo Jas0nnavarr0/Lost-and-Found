@@ -5,6 +5,7 @@ import axios from "axios";
 import { startConversation } from "../../api/conversations";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { reportPost } from "../../api/reports";
 
 export default function Modal({ data, onClose, onDelete, onUpdate }) {
   if (!data) return null;
@@ -20,6 +21,39 @@ export default function Modal({ data, onClose, onDelete, onUpdate }) {
 
   const authUser = useSelector((state) => state.auth.user);
   const isMyPost = authUser?.username === data.username;
+
+  //For Reporting Elements
+  const [showReport, setShowReport] = useState(false);
+  const [reportForm, setReportForm] = useState({
+    reason: "Spam",
+    details: ""
+  });
+
+  const handleOpenReport = () => {
+    setShowReport(true);
+  };
+
+  const handleCloseReport = () => {
+    setShowReport(false);
+    setReportForm({ reason: "Spam", details: "" });
+  };
+
+  const handleSubmitReport = async () => {
+    if (!reportForm.reason.trim()) return;
+
+    try {
+      await reportPost(data.id, {
+        reason: reportForm.reason,
+        details: reportForm.details
+      });
+      alert("Report submitted.");
+      handleCloseReport();
+    } catch (err) {
+      console.error("Report failed:", err);
+      alert("Failed to submit report.");
+    }
+  };
+// ****************************************************
   
   const [index, setIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
@@ -92,6 +126,66 @@ export default function Modal({ data, onClose, onDelete, onUpdate }) {
         onClick={(e) => e.stopPropagation()}
         className="bg-white rounded-2xl w-full max-w-4xl overflow-hidden shadow-xl relative animate-fadeIn flex"
       >
+
+        {showReport && (
+            <div
+              className="absolute inset-0 bg-black/40 flex items-center justify-center z-50"
+              onClick={handleCloseReport}
+            >
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="bg-white rounded-xl shadow-xl w-full max-w-md p-6"
+              >
+                <h3 className="text-lg font-semibold mb-4">Report this post</h3>
+
+                <label className="block text-sm font-medium mb-1">
+                  Reason
+                </label>
+                <select
+                  value={reportForm.reason}
+                  onChange={(e) =>
+                    setReportForm((prev) => ({ ...prev, reason: e.target.value }))
+                  }
+                  className="w-full border rounded-lg px-3 py-2 mb-4"
+                >
+                  <option>Spam</option>
+                  <option>Inappropriate content</option>
+                  <option>Scam / Fraud</option>
+                  <option>Other</option>
+                </select>
+
+                <label className="block text-sm font-medium mb-1">
+                  Details (optional)
+                </label>
+                <textarea
+                  rows={4}
+                  value={reportForm.details}
+                  onChange={(e) =>
+                    setReportForm((prev) => ({ ...prev, details: e.target.value }))
+                  }
+                  className="w-full border rounded-lg px-3 py-2 mb-4"
+                  placeholder="Add any extra information..."
+                />
+
+                <div className="flex justify-end gap-3">
+                  <button
+                    onClick={handleCloseReport}
+                    className="px-4 py-2 rounded-lg border text-gray-700 hover:bg-gray-100"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    onClick={handleSubmitReport}
+                    className="px-4 py-2 rounded-lg bg-red-500 text-white font-semibold hover:bg-red-600"
+                  >
+                    Submit report
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
         <button
           onClick={onClose}
           className="absolute top-4 right-4 bg-white shadow-md border rounded-full p-2 hover:bg-gray-100"
@@ -208,11 +302,20 @@ export default function Modal({ data, onClose, onDelete, onUpdate }) {
 
               <div className="flex gap-3 mt-auto">
                 {!isMyPost && ( 
-                <button 
-                  onClick={handleMessageClick}
-                  className="flex-1 bg-blue-500 text-white rounded-lg py-2 font-semibold hover:bg-blue-600">
-                  Message
-                </button>
+                  <>
+                    <button 
+                      onClick={handleMessageClick}
+                      className="flex-1 bg-blue-500 text-white rounded-lg py-2 font-semibold hover:bg-blue-600">
+                      Message
+                    </button>
+
+                    <button
+                      onClick={handleOpenReport}
+                      className="flex-1 bg-red-500 text-white rounded-lg py-2 font-semibold hover:bg-red-600"
+                    >
+                      Report
+                    </button>
+                  </>
                 )}
 
                 <button
