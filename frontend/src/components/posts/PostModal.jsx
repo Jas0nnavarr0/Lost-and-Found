@@ -23,15 +23,11 @@ export default function Modal({ data, onClose, onDelete, onUpdate }) {
     newFiles: []           // new files to upload
   });
 
-  // ---------------------------------------
   // IMAGE SLIDER BUTTONS
-  // ---------------------------------------
   const next = () => setIndex((index + 1) % images.length);
   const prev = () => setIndex((index - 1 + images.length) % images.length);
 
-  // ---------------------------------------
   // DELETE POST
-  // ---------------------------------------
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this post?")) return;
 
@@ -47,9 +43,7 @@ export default function Modal({ data, onClose, onDelete, onUpdate }) {
     }
   };
 
-  // ---------------------------------------
-  // DELETE (REMOVE) IMAGE LOCALLY
-  // ---------------------------------------
+  // DELETE IMAGE
   const removeImage = (i) => {
     setEditData({
       ...editData,
@@ -57,50 +51,34 @@ export default function Modal({ data, onClose, onDelete, onUpdate }) {
     });
   };
 
-  // ---------------------------------------
-  // UPDATE POST (WITH FILE UPLOAD)
-  // ---------------------------------------
+  // UPDATE POST
   const handleUpdate = async () => {
     try {
-      const formData = new FormData();
-
-      // TEXT FIELDS
-      formData.append("title", editData.title);
-      formData.append("description", editData.description);
-      formData.append("location", editData.location);
-
-      // EXISTING IMAGES (not deleted)
-      editData.images.forEach((img) => {
-        formData.append("existingImages", img);
-      });
-
-      // NEW FILES
-      editData.newFiles.forEach((file) => {
-        formData.append("images", file);
-      });
+      const formattedCategories = editData.categories.map(c =>
+        c.toUpperCase()
+      );
 
       const res = await axios.put(
         `http://localhost:5000/api/test/${data.id}`,
-        formData,
         {
-          withCredentials: true,
-          headers: { "Content-Type": "multipart/form-data" }
-        }
+          title: editData.title,
+          description: editData.description,
+          location: editData.location,
+          categories: formattedCategories,
+          images: editData.images
+        },
+        { withCredentials: true }
       );
 
       onUpdate(res.data);
       setIsEditing(false);
       onClose();
-
     } catch (err) {
       console.error("Update failed:", err);
       alert("Failed to update post.");
     }
   };
 
-  // ---------------------------------------
-  // RENDER
-  // ---------------------------------------
   return (
     <div
       onClick={onClose}
@@ -118,9 +96,6 @@ export default function Modal({ data, onClose, onDelete, onUpdate }) {
           <X size={18} />
         </button>
 
-        {/* ---------------------------------------
-            LEFT SIDE — IMAGE SLIDER
-        --------------------------------------- */}
         <div className="w-1/2 h-[450px] relative bg-gray-100">
           {images.length > 0 ? (
             <img
@@ -153,15 +128,10 @@ export default function Modal({ data, onClose, onDelete, onUpdate }) {
           )}
         </div>
 
-        {/* ---------------------------------------
-            RIGHT SIDE — DETAILS / EDIT MODE
-        --------------------------------------- */}
         <div className="w-1/2 p-6 flex flex-col gap-4 overflow-y-auto h-[450px]">
 
           {isEditing ? (
-            // ---------------------------------------
             // EDIT MODE
-            // ---------------------------------------
             <div className="flex flex-col gap-4">
 
               {/* TITLE */}
@@ -188,9 +158,6 @@ export default function Modal({ data, onClose, onDelete, onUpdate }) {
                 className="border rounded-lg p-2"
               />
 
-              {/* ---------------------------------------
-                  IMAGE MANAGEMENT (PREVIEW + DELETE)
-              --------------------------------------- */}
               <div>
                 <p className="text-sm font-semibold mb-1">Images</p>
 
@@ -227,7 +194,7 @@ export default function Modal({ data, onClose, onDelete, onUpdate }) {
                 />
               </div>
 
-              {/* SAVE / CANCEL BUTTONS */}
+              {/* SAVE and CANCEL BUTTONS */}
               <div className="flex gap-3 mt-auto">
                 <button
                   onClick={handleUpdate}
@@ -245,9 +212,6 @@ export default function Modal({ data, onClose, onDelete, onUpdate }) {
               </div>
             </div>
           ) : (
-            // ---------------------------------------
-            // VIEW MODE
-            // ---------------------------------------
             <>
               <h2 className="text-2xl font-bold">{data.title}</h2>
               <p className="text-gray-700">{data.description}</p>

@@ -92,7 +92,7 @@ public class PostService {
                     .toList();
         }
 
-        // 2) Location filter
+        // Location filter
         if (location != null && !location.isEmpty()) {
             String loc = location.toLowerCase();
             posts = posts.stream()
@@ -103,7 +103,7 @@ public class PostService {
                     .toList();
         }
 
-        // 3) Categories filte
+        // Categories filte
         if (categories != null && !categories.isEmpty()) {
             // Convert input strings → enum values
             List<Category> categoryEnums = categories.stream()
@@ -118,7 +118,7 @@ public class PostService {
                     .toList();
         }
 
-        // 4) Date filter: last 24 hours / 7 days / 30 days
+        // Date filter: last 24 hours / 7 days / 30 days
         if (date != null && !date.isEmpty()) {
             LocalDateTime now = LocalDateTime.now();
 
@@ -161,7 +161,9 @@ public class PostService {
         post.setTitle(dto.getTitle());
         post.setDescription(dto.getDescription());
         post.setLocation(dto.getLocation());
+
         post.setCategories(dto.getCategories());
+
         post.setImages(dto.getImages());
 
         Post saved = postRepository.save(post);
@@ -177,6 +179,7 @@ public class PostService {
                 saved.getImages()
         );
     }
+
 
     // DELETE POST
     public PostDeleteResponseDTO deletePost(Long id, UserDetailsImpl currentUser) {
