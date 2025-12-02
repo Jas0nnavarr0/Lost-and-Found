@@ -53,11 +53,16 @@ public class PostController {
         return postService.deletePost(id, currentUser);
     }
 
-    // return all posts
     @GetMapping
-    public List<PostResponseDTO> getTests() {
-        return postService.getAllUsers();
+    public List<PostResponseDTO> getFilteredPosts(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) List<String> categories,
+            @RequestParam(required = false) String date
+    ) {
+        return postService.filterPosts(search, location, categories, date);
     }
+
 
     //@RequestMapping("/post/{id}")
 }

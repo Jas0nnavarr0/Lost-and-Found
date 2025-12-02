@@ -1,25 +1,41 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { format } from "date-fns";
-import { ArrowLeft, UserCircle, MapPin, Calendar, Images } from "lucide-react";
+import { UserCircle, MapPin, Calendar, Images } from "lucide-react";
 import Modal from "./PostModal";
+import Filter from "./Filter";
+import { useNavigate } from "react-router-dom";
 
 export default function Posts() {
+  const navigate = useNavigate();
+
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [filters, setFilters] = useState({
+    search: "",
+    location: "",
+    date: "",
+    categories: []
+  });
 
-  // FETCH POSTS
+  // Fetch posts
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/test", { withCredentials: true })
-      .then((res) => {
-        console.log("Received from backend:", res.data);
-        setUsers(res.data);
-      })
-      .catch((err) => {
-        console.error("Error fetching users:", err);
-      });
-  }, []);
+    axios.get("http://localhost:5000/api/test", {
+      withCredentials: true,
+      params: {
+        search: filters.search || null,
+        location: filters.location || null,
+        categories: filters.categories.length > 0 ? filters.categories : null,
+        date: filters.date || null
+      },
+      paramsSerializer: {                // ⭐ ADD THIS ⭐
+          indexes: null,
+        },
+    })
+    .then((res) => setUsers(res.data))
+    .catch((err) => console.error("Filter fetch error:", err));
+  }, [filters]);
+
 
   // Delete callback
   const handlePostDelete = (deletedId) => {
@@ -37,6 +53,8 @@ export default function Posts() {
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-900 pb-16">
+
+      {/* Modal */}
       {selectedUser && (
         <Modal
           data={selectedUser}
@@ -46,22 +64,17 @@ export default function Posts() {
         />
       )}
 
-      {/* Navbar */}
-      <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-          <button className="p-2 -ml-2 text-gray-500 hover:bg-gray-100 rounded-full transition">
-            <ArrowLeft size={20} />
-          </button>
-          <h1 className="font-bold text-lg text-gray-800">Users & Posts</h1>
-          <div className="w-8"></div>
-        </div>
-      </nav>
+      {/* Filter */}
+      <Filter
+        onBack={() => navigate("/home")}
+        onFilterChange={(newFilters) => setFilters(newFilters)}
+      />
 
       <main className="max-w-5xl mx-auto px-4 pt-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">All Users</h2>
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">All Posts</h2>
 
         {users.length === 0 && (
-          <p className="text-gray-500 text-center py-12">No users found.</p>
+          <p className="text-gray-500 text-center py-12">No posts found.</p>
         )}
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -156,5 +169,6 @@ export default function Posts() {
     </div>
   );
 }
+
 
 
