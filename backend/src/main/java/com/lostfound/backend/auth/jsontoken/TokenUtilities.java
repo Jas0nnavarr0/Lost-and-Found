@@ -25,7 +25,7 @@ public class TokenUtilities {
     static Logger log = LoggerFactory.getLogger(TokenUtilities.class);
 
     @Value("${spring.backend.app.jwtCookieName}")
-    private String jsonCookie;
+    private String jsonCookie; 
 
     @Value("${spring.app.jwtSecret}")
     private String secret;

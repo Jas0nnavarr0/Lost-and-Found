@@ -12,6 +12,8 @@ import ModeratorPage from './pages/ModeratorPage'
 import AdminPage from './pages/AdminPage'
 import PostForm from "./components/posts/PostForm";
 import Posts from "./components/posts/Posts";
+import ConversationsPage from './pages/ConversationsPage'
+import DirectMessagePage from './pages/DirectMessagePage'
 
 function AppContent() {
   const location = useLocation();
@@ -32,6 +34,8 @@ function AppContent() {
           <Route path="/admin" element={<AdminRoute><AdminPage /></AdminRoute>} />
           <Route path="/create-post" element={<PostForm />} />
           <Route path="/posts" element={<Posts />} />
+          <Route path="/messages" element={<ConversationsPage />} />
+          <Route path="/messages/:conversationId" element={<DirectMessagePage />} />
         </Route>
       </Routes>
     </>

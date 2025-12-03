@@ -1,5 +1,6 @@
 package com.lostfound.backend.controllers;
 
+import com.lostfound.backend.dtos.AdminUserDTO;
 import com.lostfound.backend.model.EnumRole;
 import com.lostfound.backend.model.Role;
 import com.lostfound.backend.model.User;
@@ -26,13 +27,22 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/users")
     public ResponseEntity<?> getRegularUsers() {
-        return ResponseEntity.ok(userRepository.findRegularUsers());
+
+        List<AdminUserDTO> dto = userRepository.findRegularUsers()
+                .stream()
+                .map(u -> new AdminUserDTO(u.getUserId(), u.getUsername()))
+                .toList();
+        return ResponseEntity.ok(dto);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/moderators")
     public ResponseEntity<?> getModerators() {
-        return ResponseEntity.ok(userRepository.findModeratorsOnly());
+        List<AdminUserDTO> dto = userRepository.findModeratorsOnly()
+                .stream()
+                .map(u -> new AdminUserDTO(u.getUserId(), u.getUsername()))
+                .toList();
+        return ResponseEntity.ok(dto);
 
     }
 
