@@ -2,6 +2,7 @@ package com.lostfound.backend.auth;
 
 import com.lostfound.backend.model.EnumRole;
 import com.lostfound.backend.model.Role;
+import com.lostfound.backend.model.User;
 import com.lostfound.backend.repositories.RoleRepository;
 import com.lostfound.backend.repositories.UserRepository;
 import com.lostfound.backend.auth.jsontoken.UnauthorizedCheck;
@@ -23,6 +24,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import java.util.Set;
 
 @Configuration
 @EnableWebSecurity
@@ -98,7 +101,7 @@ public class SecurityConfig {
 
     // Create dummy database data for testing purposes
     @Bean
-    public CommandLineRunner initData(RoleRepository roleRepository, UserRepository userRepository) {
+    public CommandLineRunner initData(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
             // Retrieve or create roles
             Role userRole = roleRepository.findByRoleName(EnumRole.ROLE_USER)
@@ -118,6 +121,18 @@ public class SecurityConfig {
                         Role newAdminRole = new Role(EnumRole.ROLE_ADMIN);
                         return roleRepository.save(newAdminRole);
                     });
+
+            Set<Role> adminRoles = Set.of(userRole, moderatorRole, adminRole);
+
+            if (!userRepository.existsByUsername("main_admin")) {
+                User admin = new User("main_admin", "main_admin@example.com", passwordEncoder.encode("password"), "1010101010");
+                userRepository.save(admin);
+            }
+
+            userRepository.findByUsername("main_admin").ifPresent(admin -> {
+                admin.setRoles(adminRoles);
+                userRepository.save(admin);
+            });
         };
     }
 }
