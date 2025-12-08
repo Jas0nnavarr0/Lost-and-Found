@@ -4,8 +4,8 @@ Full-stack software engineering project implementing a lost and found management
 
 # Admin Testing 
 There is a default admin account created that can be used for testing purposes
-username: main_admin
-password: password
+* username: main_admin
+* password: password
 
 # Instructions 
 
