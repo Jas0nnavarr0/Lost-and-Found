@@ -5,9 +5,9 @@ Full-stack software engineering project implementing a lost and found management
 # Warning
 
 Because there were merge conflicts that were really difficult to resolve, the features may have to be tested in different branches. 
+* For core functionality, filtering, searching, and admin features: main branch
 * For the main functionality with creating posts and starting conversations: messaging-wo-websocket branch
 * For moderator dashboard and reporting: reporting branch
-* For filtering and searching functionality: main branch
 
 # Admin Testing 
 There is a default admin account created that can be used for testing purposes
